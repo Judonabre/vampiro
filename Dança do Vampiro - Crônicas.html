@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dança do Vampiro — Crônicas da Noite</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blood: #8b0000;
+    --blood-bright: #c0392b;
+    --blood-dim: #4a0000;
+    --gold: #b8972a;
+    --bg: #0a0805;
+    --bg2: #110d09;
+    --surface: #1e1812;
+    --surface2: #261f16;
+    --text: #d4c9b0;
+    --text-dim: #8a7d66;
+    --text-faint: #4a4236;
+    --border: #2e261a;
+    --border-bright: #3d3222;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.8;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #particles {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .particle {
+    position: absolute; width: 2px; height: 2px;
+    background: var(--blood); border-radius: 50%;
+    opacity: 0; animation: drift linear infinite;
+  }
+  @keyframes drift {
+    0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10%  { opacity: 0.4; }
+    90%  { opacity: 0.2; }
+    100% { transform: translateY(-20px) translateX(var(--drift-x, 30px)); opacity: 0; }
+  }
+
+  #app {
+    position: relative; z-index: 1;
+    max-width: 900px; margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  header {
+    text-align: center;
+    padding: 4rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-ornament {
+    font-size: 1.2rem; color: var(--blood); letter-spacing: 0.5rem;
+    margin-bottom: 1.5rem; display: block;
+  }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400; color: #e8dcc8;
+    letter-spacing: 0.08em; line-height: 1.2; margin-bottom: 0.6rem;
+  }
+  header .subtitle {
+    font-style: italic; color: var(--text-dim);
+    font-size: 1rem; letter-spacing: 0.06em;
+  }
+  .blood-line {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blood), transparent);
+    margin: 1.5rem auto 0;
+  }
+
+  #main-nav {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-btn {
+    flex: 1; padding: 1rem 0.5rem;
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: var(--text-dim); font-family: 'Cinzel', serif;
+    font-size: 0.75rem; letter-spacing: 0.1em;
+    cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+  }
+  .nav-btn:hover { color: var(--text); background: var(--surface); }
+  .nav-btn.active {
+    color: var(--blood-bright); border-bottom-color: var(--blood-bright);
+    background: var(--surface);
+  }
+
+  .section { display: none; padding: 3rem 0 5rem; }
+  .section.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .chapter-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 2.5rem;
+  }
+  .chapter-dots { display: flex; gap: 8px; }
+  .chapter-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border-bright); border: none; cursor: pointer;
+    padding: 0; transition: all 0.2s;
+  }
+  .chapter-dot.active { background: var(--blood-bright); transform: scale(1.3); }
+  .chapter-dot:hover { background: var(--text-dim); }
+
+  .btn-prev, .btn-next {
+    background: none; border: 1px solid var(--border-bright);
+    color: var(--text-dim); padding: 0.5rem 1.2rem;
+    font-family: 'Cinzel', serif; font-size: 0.7rem;
+    letter-spacing: 0.12em; cursor: pointer;
+    transition: all 0.2s; text-transform: uppercase;
+  }
+  .btn-prev:hover, .btn-next:hover {
+    border-color: var(--blood); color: var(--blood-bright);
+    background: rgba(139,0,0,0.08);
+  }
+  .btn-prev:disabled, .btn-next:disabled {
+    opacity: 0.2; cursor: default; pointer-events: none;
+  }
+
+  .chapter { display: none; }
+  .chapter.active { display: block; animation: fadeIn 0.35s ease; }
+
+  .chapter-header {
+    margin-bottom: 2.5rem; padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .chapter-number {
+    font-family: 'Cinzel', serif; font-size: 0.7rem;
+    letter-spacing: 0.2em; color: var(--blood-bright); font-weight: 700;
+    text-transform: uppercase; margin-bottom: 0.5rem; display: block;
+  }
+  .chapter-title {
+    font-family: 'Cinzel', serif; font-size: 1.8rem;
+    font-weight: 400; color: #e8dcc8; line-height: 1.3; margin-bottom: 0.4rem;
+  }
+  .chapter-date { font-style: italic; color: var(--text-dim); font-size: 0.95rem; }
+
+  .chapter-body p {
+    margin-bottom: 1.4rem; text-indent: 2em; text-align: justify;
+  }
+  .chapter-body p:first-child { text-indent: 0; }
+  .chapter-body p:first-child::first-letter {
+    font-family: 'Cinzel', serif;
+    font-size: 4rem; line-height: 0.75;
+    float: left; margin-right: 0.1em; margin-top: 0.12em;
+    color: var(--blood-bright);
+  }
+
+  .divider {
+    text-align: center; color: var(--blood-dim);
+    margin: 2rem 0; font-size: 1.2rem; letter-spacing: 0.4rem;
+  }
+
+  .action-callout {
+    border-left: 2px solid var(--blood-dim);
+    padding: 0.8rem 1.2rem; margin: 1.5rem 0;
+    background: rgba(139,0,0,0.04);
+    font-style: italic; color: var(--text-dim); font-size: 0.95rem;
+  }
+
+  .chars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem; margin-top: 2rem;
+  }
+  .char-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.5rem; cursor: pointer; transition: all 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .char-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--blood-dim); transition: background 0.2s;
+  }
+  .char-card:hover { border-color: var(--blood-dim); background: var(--surface2); }
+  .char-card:hover::before { background: var(--blood-bright); }
+  .char-card.expanded { border-color: var(--blood); }
+  .char-card.expanded::before { background: var(--blood-bright); }
+  .char-card.npc-card::before { background: #2a2a1a; }
+  .char-card.npc-card { border-color: #2e2e1a; }
+  .char-card.npc-card:hover::before { background: var(--gold); }
+  .char-card.npc-card.expanded::before { background: var(--gold); }
+
+  .char-clan {
+    font-family: 'Cinzel', serif; font-size: 0.65rem;
+    letter-spacing: 0.18em; color: var(--blood-bright); font-weight: 700;
+    text-transform: uppercase; margin-bottom: 0.3rem;
+  }
+  .char-clan.unknown { color: var(--gold); }
+  .char-name {
+    font-family: 'Cinzel', serif; font-size: 1.1rem;
+    color: #e8dcc8; margin-bottom: 0.2rem; font-weight: 400;
+  }
+  .char-player {
+    font-size: 0.8rem; color: var(--text-faint);
+    font-style: italic; margin-bottom: 0.8rem;
+  }
+  .char-tagline { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; }
+  .char-details {
+    display: none; margin-top: 1rem;
+    padding-top: 1rem; border-top: 1px solid var(--border);
+    font-size: 0.88rem; color: var(--text-dim); line-height: 1.6;
+  }
+  .char-card.expanded .char-details { display: block; }
+  .char-toggle {
+    font-family: 'Cinzel', serif; font-size: 0.65rem;
+    letter-spacing: 0.1em; color: var(--text-faint);
+    margin-top: 0.8rem; display: block;
+    text-align: right; text-transform: uppercase; transition: color 0.2s;
+  }
+  .char-card:hover .char-toggle { color: var(--blood); }
+  .char-card.npc-card:hover .char-toggle { color: var(--gold); }
+
+  .discipline-tag {
+    display: inline-block;
+    background: rgba(139,0,0,0.15); border: 1px solid var(--blood-dim);
+    color: var(--blood-bright); font-size: 0.72rem; padding: 0.15rem 0.6rem;
+    letter-spacing: 0.08em; margin: 0.2rem 0.2rem 0 0;
+    font-family: 'Cinzel', serif;
+  }
+  .discipline-tag.unknown-tag {
+    background: rgba(184,151,42,0.1); border-color: #5a4a10;
+    color: var(--gold);
+  }
+
+  .chars-section-label {
+    font-family: 'Cinzel', serif; font-size: 0.7rem;
+    letter-spacing: 0.2em; color: var(--text-faint);
+    text-transform: uppercase; margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+  }
+
+  .timeline { position: relative; padding-left: 2rem; margin-top: 2rem; }
+  .timeline::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px; background: var(--border-bright);
+  }
+  .tl-item { position: relative; margin-bottom: 2.5rem; }
+  .tl-dot {
+    position: absolute; left: -2rem; top: 0.4rem;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--blood-dim); border: 1px solid var(--blood);
+    transform: translateX(-4px); transition: all 0.2s;
+  }
+  .tl-dot.tl-dot-threat { background: #3a2a00; border-color: var(--gold); }
+  .tl-item:hover .tl-dot { background: var(--blood-bright); transform: translateX(-4px) scale(1.3); }
+  .tl-item:hover .tl-dot.tl-dot-threat { background: var(--gold); }
+  .tl-date {
+    font-family: 'Cinzel', serif; font-size: 0.7rem;
+    letter-spacing: 0.15em; color: var(--blood-bright); font-weight: 700;
+    text-transform: uppercase; margin-bottom: 0.3rem;
+  }
+  .tl-title {
+    font-family: 'Cinzel', serif; font-size: 1rem;
+    color: #e8dcc8; margin-bottom: 0.5rem; font-weight: 400;
+  }
+  .tl-body { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
+  .tl-tags { margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tl-tag {
+    font-size: 0.7rem; padding: 0.1rem 0.5rem;
+    background: var(--surface2); border: 1px solid var(--border-bright);
+    color: var(--text-dim); letter-spacing: 0.05em; font-weight: 600;
+  }
+  .tl-tag.danger { border-color: var(--blood-dim); color: var(--blood-bright); background: rgba(139,0,0,0.1); }
+
+  .section-title {
+    font-family: 'Cinzel', serif; font-size: 1.4rem;
+    font-weight: 400; color: #e8dcc8;
+    margin-bottom: 0.5rem; letter-spacing: 0.06em;
+  }
+  .section-sub {
+    font-style: italic; color: var(--text-faint); font-size: 0.9rem; margin-bottom: 2rem;
+  }
+
+  #scroll-top {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 42px; height: 42px;
+    background: var(--surface); border: 1px solid var(--border-bright);
+    color: var(--text-dim); font-size: 1.2rem;
+    cursor: pointer; opacity: 0; transition: all 0.3s;
+    display: flex; align-items: center; justify-content: center; z-index: 200;
+  }
+  #scroll-top.visible { opacity: 1; }
+  #scroll-top:hover { border-color: var(--blood); color: var(--blood-bright); }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    #app { padding: 0 1.2rem; }
+    .chars-grid { grid-template-columns: 1fr; }
+    .nav-btn { font-size: 0.62rem; padding: 0.9rem 0.3rem; }
+    header h1 { font-size: 1.8rem; }
+    .mystery-grid { grid-template-columns: 1fr; }
+  }
+
+  /* === MISTÉRIOS === */
+  .mystery-priority-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 2rem 0 0.6rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+  .mystery-priority-label.alta { color: var(--blood-bright); border-color: var(--blood-dim); }
+  .mystery-priority-label.media { color: var(--gold); border-color: #3d3010; }
+  .mystery-priority-label.resolvido { color: var(--text-faint); }
+  .mystery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.2rem;
+    margin-top: 0.8rem;
+  }
+  .mystery-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blood-dim);
+    padding: 1.1rem 1.3rem;
+    border-radius: 2px;
+  }
+  .mystery-card.media-prio { border-left-color: #4a3a0a; }
+  .mystery-card.resolvida { border-left-color: var(--text-faint); opacity: 0.6; }
+  .mystery-card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.82rem;
+    color: #e8dcc8;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  .mystery-card p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-bottom: 0.5rem;
+  }
+  .mystery-card-char {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: 'Cinzel', serif;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+    margin-top: 0.2rem;
+  }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div id="app">
+  <header>
+    <span class="header-ornament">✦ ✦ ✦</span>
+    <h1>Dança do Vampiro</h1>
+    <p class="subtitle">Crônicas da Noite — São Paulo</p>
+    <div class="blood-line"></div>
+  </header>
+
+  <nav id="main-nav">
+    <button class="nav-btn active" onclick="showSection('capitulos', this)">Capítulos</button>
+    <button class="nav-btn" onclick="showSection('personagens', this)">Personagens</button>
+    <button class="nav-btn" onclick="showSection('cronologia', this)">Cronologia</button>
+    <button class="nav-btn" onclick="showSection('misterios', this)">Mistérios</button>
+  </nav>
+
+  <!-- CAPÍTULOS -->
+  <div id="sec-capitulos" class="section active">
+    <div class="chapter-nav">
+      <button class="btn-prev" id="btn-prev" onclick="changeChapter(-1)" disabled>← Anterior</button>
+      <div class="chapter-dots" id="chapter-dots"></div>
+      <button class="btn-next" id="btn-next" onclick="changeChapter(1)">Próximo →</button>
+    </div>
+
+    <!-- Cap 1 -->
+    <div class="chapter active" id="cap-0">
+      <div class="chapter-header">
+        <span class="chapter-number">Capítulo I</span>
+        <h2 class="chapter-title">A Noite no Unique</h2>
+        <p class="chapter-date">15 de abril de 2026 — Pompeia, São Paulo</p>
+      </div>
+      <div class="chapter-body">
+        <p>Era quase meia-noite quando os telefones tocaram. Sérgio Lee havia mandado uma mensagem curta para cada um: precisava deles no Hotel Unique, em Pompeia. Nenhuma explicação. Nenhuma era necessária — o tom era de urgência, e eles chegaram.</p>
+        <p>O suíte de Sérgio no décimo terceiro andar cheirava a sangue antes mesmo de a porta se abrir completamente. Suzana estava morta na cama. Ela era uma mulher de traços asiáticos, casada, que havia se encontrado com Sérgio algumas horas antes. O que devia ser uma noite discreta havia terminado de forma catastrófica: Sérgio havia perdido o controle durante a alimentação. A garganta de Suzana estava aberta. Havia sangue no teto, nas paredes, na roupa de cama. A Fera havia assumido o comando, e o resultado era inequívoco.</p>
+        <div class="action-callout">Israel Brasil foi o primeiro a agir: ligou para Malik, seu servo e ex-policial civil, e pediu que viesse imediatamente com material específico — sacos plásticos resistentes, lona, uma serra de mão.</div>
+        <p>Enquanto aguardavam, Gabriel Marone — o Biel — saiu pelo corredor com os sentidos aguçados pelo Auspex. Ele percorreu os andares próximos, acompanhando o percurso dos cabos elétricos e de rede nas paredes, até rastrear sua origem: o CPD do hotel ficava diretamente abaixo do mezanino do lobby, acessível por uma escada de serviço. Ele registrou mentalmente a localização e voltou ao quarto.</p>
+        <p>Sérgio foi ao corredor identificar quem estava de plantão naquele andar. Encontrou uma camareira — uma imigrante africana de meia-idade, com o crachá na altura do peito. Ele se posicionou de frente para ela, fez contato visual e ativou o Domínio. A ordem foi precisa: ela deveria trocar toda a roupa de cama do suíte, mergulhar os lençóis no produto de limpeza mais forte disponível no carrinho de serviço, e então esquecer completamente que havia estado ali. A mulher assentiu com olhos vazios e caminhou em direção ao quarto como se cumprisse uma rotina.</p>
+        <p>Israel estava com fome — seu nível havia chegado ao limite onde o controle começa a escorregar. Ele avisou os outros e foi embora antes que a situação piorasse. Leo Rocha pegou um dos sacos já preparados e também saiu. Roberval revistou os pertences de Suzana até encontrar as chaves do carro dela — trataria de sumir com o veículo durante a noite. Biel pegou o celular de Suzana, colocou no modo avião imediatamente e guardou no bolso.</p>
+        <div class="action-callout">Malik chegou com uma bolsa preta. Ele era um homem habituado a cenas de crime do outro lado da lei, e trabalhou no banheiro sem perder tempo. O corpo de Suzana foi desmembrado nas juntas.</div>
+        <p>As partes foram embaladas em sacos plásticos duplos e distribuídas entre malas e bolsas do grupo. A camareira, enquanto isso, trocava os lençóis na outra peça do suíte, com os olhos de quem não estava vendo nada.</p>
+        <p>Quando saíram, o corredor estava vazio. O carro de Sérgio estava no estacionamento do hotel; o de Biel, na rua. Partiram separados, sem conversar, cada um carregando o peso daquela noite de formas distintas.</p>
+        <p>Israel estava num Uber a caminho do apartamento em Santana quando o carro desacelerou. Dois ou três quarteirões antes do prédio onde moravam, havia um cordão policial. Técnicos de crime trabalhavam na área de uma obra. O Uber contornou o bloqueio por uma rua lateral. Israel olhou pela janela ao passar: a vítima era um vigilante de obra. Pela posição dos policiais e pela forma como o corpo havia sido coberto, ficava claro que a morte havia sido violenta. Não havia sangue visível no chão. Israel chegou em casa e ficou quieto com o que havia visto.</p>
+      </div>
+    </div>
+
+    <!-- Cap 2 -->
+    <div class="chapter" id="cap-1">
+      <div class="chapter-header">
+        <span class="chapter-number">Capítulo II</span>
+        <h2 class="chapter-title">O Apagamento</h2>
+        <p class="chapter-date">22 de abril de 2026 — Santana, São Paulo</p>
+      </div>
+      <div class="chapter-body">
+        <p>Israel não dormiu. Enquanto os outros se dispersavam pela madrugada, ele ficou diante do computador no apartamento de Santana, conectado remotamente à infraestrutura de TI do Hotel Unique. O sistema de reservas havia sido instalado por uma empresa terceirizada e estava acessível pela internet — uma falha comum em estabelecimentos que terceirizavam esse serviço sem auditorias adequadas. Israel encontrou o vetor de entrada, acessou o painel administrativo e executou um rollback: reverteu o servidor para o estado de vinte e quatro horas antes. O registro do check-in de Sérgio Lee desapareceu como se nunca tivesse existido.</p>
+        <div class="action-callout">O sistema de câmeras era outro problema — separado da rede, operando com cartões SD físicos armazenados no CPD. Para apagar aquelas gravações, alguém precisaria estar lá.</div>
+        <p>Biel ainda estava no hotel com Sérgio. Israel ligou e confirmou: o CPD ficava exatamente onde Biel havia rastreado — sob o mezanino do lobby, acessível por escada de serviço. Com essa informação, Sérgio agiu. Voltou ao corredor do andar e encontrou novamente a camareira que havia dominado antes. Desta vez a ordem foi diferente: substituir completamente a roupa de cama do suíte — não apenas lavar, mas trocar por lençóis novos do estoque. E depois, usando o Forgetful Mind, Sérgio apagou da memória dela todo o registro dos últimos encontros. Ela ficou parada por um instante, piscou, e caminhou em direção ao elevador de serviço sem olhar para trás.</p>
+        <p>Sérgio e Biel desceram carregando as últimas malas. O Unique tinha câmeras na recepção e nos corredores, mas a ausência do registro de hospedagem tornava qualquer imagem residual inútil. Eles seguiram para o estacionamento e partiram separadamente em direção a Santana.</p>
+        <p>No apartamento, as malas foram descarregadas na cozinha. O conteúdo foi colocado no freezer, dividido em sacos menores. Era uma solução provisória — ninguém havia discutido ainda o que fazer a seguir, mas todos sabiam que o freezer não era um destino final.</p>
+        <p>Israel, atrás da porta fechada do quarto, alimentou-se de Malik. O servo saiu pálido e com as pernas bambas, mas silencioso, como sempre. Quando Israel voltou à sala, estava mais calmo. Reportou ao grupo: o rollback estava concluído, o registro de Sérgio havia sido apagado. As câmeras precisavam de acesso físico ao CPD. E havia outra coisa — a atividade policial na rua era maior do que na noite anterior.</p>
+        <div class="action-callout">Biel e Sérgio decidiram ir ver. Saíram a pé, sem pressa, como dois moradores noturnos dando uma volta.</div>
+        <p>Chegaram ao perímetro da obra. A fita policial ainda estava no lugar, mas havia mais agentes agora, alguns de civil, e um carro da perícia estacionado na calçada. Biel ativou o Auspex e filtrou os sons do entorno: captou a conversa de dois técnicos que examinavam o chão dentro do canteiro. Um deles disse, com a naturalidade de quem lida com mortes há anos: "aqui quase não tem sangue." O outro respondeu: "a cabeça estava lá, do outro lado." Biel e Sérgio continuaram caminhando como se nada houvessem ouvido.</p>
+        <p>O céu estava começando a clarear na linha dos prédios. Eles voltaram para o apartamento, desceram as persianas e foram para o torpor com essa informação presa nos pensamentos — um vigilante decapitado, quase sem sangue, a menos de três quarteirões de onde dormiam.</p>
+      </div>
+    </div>
+
+    <!-- Cap 3 -->
+    <div class="chapter" id="cap-2">
+      <div class="chapter-header">
+        <span class="chapter-number">Capítulo III</span>
+        <h2 class="chapter-title">A Testemunha de Ferro</h2>
+        <p class="chapter-date">6 de maio de 2026 — Santana, São Paulo</p>
+      </div>
+      <div class="chapter-body">
+        <p>Acordaram ao pôr do sol. Israel foi direto ao computador. Levou algum tempo, mas encontrou: um blog regional de notícias do norte de São Paulo havia publicado uma nota curta, sem foto, sem nome da vítima, sem data precisa — "vigia de obra encontrado degolado de madrugada na região de Santana." Nenhum jornal de maior circulação havia pegado o caso. Era como se alguém tivesse deixado a coisa cair no vazio.</p>
+        <div class="action-callout">Leo ligou para o Doutor Casa Grande, seu contato no IML. Era necessário um pagamento para obter qualquer informação real, e Leo fez a transferência antes de fazer a pergunta.</div>
+        <p>A resposta veio em voz baixa, com o cuidado de quem sabe que está cruzando uma linha: o corpo havia sido encaminhado diretamente para supervisão sem passar pelo processamento padrão. Alguém com influência havia interferido na cadeia de custódia. Casa Grande não disse quem. Disse apenas que era a primeira vez que via aquilo acontecer daquela forma.</p>
+        <p>Biel ligou para seu contato na Polícia Federal — um agente de Feira de Santana que havia construído uma carreira em São Paulo e que eventualmente tinha acesso a informações que não circulavam pelos canais normais. O Baiano confirmou que não havia nenhuma investigação ligando o hotel à morte do vigilante. A única movimentação relacionada ao Unique era o registro de uma tentativa de invasão ao sistema — exatamente o rollback que Israel havia executado. O Baiano mandou ainda uma localização pelo aplicativo: um cemitério no extremo norte da cidade, frequentado por organizações criminosas para descarte discreto. "Não vai sozinho", ele escreveu.</p>
+        <p>Israel propôs a solução definitiva para o problema do freezer. Seu sangue Tremere tinha propriedades corrosivas: expelido sobre matéria orgânica, dissolvia carne e osso em cinza em questão de minutos. Ele ligou para Malik e mandou o servo até a Leroy Merlin com instruções específicas: comprar duas churrasqueiras grandes de metal. Elas serviriam como contentor no box do banheiro.</p>
+        <div class="action-callout">O grupo decidiu investigar o canteiro. Leo tinha um crachá improvisado — "Tribuna da Verdade". Israel carregaria a câmera. Biel levou um bloco de notas.</div>
+        <p>Chegaram ao local e encontraram o que esperavam: uma viatura da PM parada em frente à escola ao lado, e um carro de segurança privada na frente do portão do canteiro. Leo se aproximou dos dois PMs na viatura. Conversou com naturalidade — confirmaram que havia de fato um corpo decapitado, mas que nenhum dos dois estava de plantão naquela madrugada.</p>
+        <p>Israel foi falar com o segurança do canteiro — um homem de meia-idade chamado Ernesto, uniforme escuro, postura fechada. Israel tentou uma abordagem direta: sacou cinquenta reais e ofereceu pela entrada. Ernesto não aceitou. Ficou visivelmente ofendido, como se o valor fosse um insulto.</p>
+        <p>Biel se adiantou antes que a situação piorasse. Estendeu a mão para Ernesto com a familiaridade de quem conhece o homem há anos. Enquanto apertava a mão, inclinou levemente o corpo e disse algo em voz baixa — deixou a Fera colorir o tom, aquela qualidade de presença que os mortos-vivos carregam e que os vivos raramente conseguem ignorar. Não foi Domínio. Foi algo mais sutil. Ernesto abriu o portão. Cobrou dois reais. Biel pagou.</p>
+        <p>Dentro do canteiro, Biel ativou o Auspex e abriu todos os sentidos. O chão de areia perto do centro da obra tinha coloração levemente diferente — areia nova sobre areia velha. Ele se ajoelhou, escavou com o dedo até encontrar a camada escurecida abaixo. Mergulhou o dedo e levou à boca. Era sangue seco. A Fera reconheceu o sabor antes que o raciocínio terminasse de processar; havia uma linha de saliva no queixo antes que ele se desse conta. O grupo observou em silêncio.</p>
+        <div class="action-callout">Havia dois rastros de cheiro distintos naquele sangue: o primeiro era muito velho — pó e tempo e catacumbas. O segundo era recente: suor de rua, plástico de capa de chuva. O segundo rastro estava vivo, próximo.</div>
+        <p>Foi então que a Sinestesia de Segredos de Biel disparou. Uma leitura involuntária das pessoas ao redor, um flash de verdades que ninguém havia pedido para revelar. Biel olhou para Israel e viu: arrogância esmagadora, a certeza inabalável de ser superior a todos os presentes. Olhou para Leo e viu uma sombra — não um ato, não uma data, mas a forma de uma traição futura, densa e silenciosa como névoa.</p>
+        <p>Israel sentiu a compulsão do Domínio agir nele naquele momento — a necessidade de afirmar hierarquia, de deixar claro quem mandava ali. Virou-se para o grupo e começou a falar com uma autoridade que ninguém havia lhe conferido. Biel não recuou. Por um momento, o canteiro de obras foi um campo de tensão entre dois vampiros que sabiam exatamente o que o outro era.</p>
+        <p>Então uma voz feminina veio de algum ponto à esquerda, perto de uma pilha de ferragens: "Carai, viado. Achei que ia sair porrada aqui."</p>
+        <p>A mulher que emergiu da sombra era baixa, de pele escura, vestindo um moletom com capuz puxado, bermuda de futebol e Havaianas. As deformidades ósseas no rosto e nas mãos eram evidentes — estrutura que nenhuma genética humana produzia. Ela cheirava a asfalto e a noite longa. Era uma Nosferatu. Disse que se chamava Raquel.</p>
+      </div>
+    </div>
+
+    <!-- Cap 4 -->
+    <div class="chapter" id="cap-3">
+      <div class="chapter-header">
+        <span class="chapter-number">Capítulo IV</span>
+        <h2 class="chapter-title">Sangue Novo</h2>
+        <p class="chapter-date">13 de maio de 2026 — Santana / Itaim Bibi, São Paulo</p>
+      </div>
+      <div class="chapter-body">
+        <p>Raquel não perdeu tempo em explicações. Havia sido enviada pela Sintonia do Mandaqui para investigar o incidente no canteiro. Ela explicou a geografia do poder naquela região: a Sintonia do Mandaqui controlava o norte. O Baronato da Paz de Santana controlava o sul e o centro. O prédio deles ficava exatamente na fronteira — um "domínio livre", tecnicamente sem dono, tecnicamente de todos.</p>
+        <div class="action-callout">Havia um precedente: uma semana antes, nas proximidades da Vila Aurora, um motoboy havia sido encontrado morto. Causa oficial: acidente. Causa real: exsanguinação — o sangue havia sido retirado antes da encenação.</div>
+        <p>O grupo concordou em manter contato. Raquel propôs um ponto de encontro para dali a três dias: o prédio abandonado perto da antiga academia de polícia, no final da Rua Engenheiro. "Vou espalhar que a Voluntários da Pátria tem dono", ela disse, antes de desaparecer entre as sombras do canteiro como se nunca tivesse estado ali.</p>
+        <p>De volta ao apartamento, encontraram Malik aguardando na porta com duas churrasqueiras grandes de metal embrulhadas em papel kraft. Israel as levou para o banheiro. Posicionou as grelhas sobrepostas no box do chuveiro e começou a trabalhar em silêncio.</p>
+        <p>Os pedaços de Suzana saíram do freezer um a um — cada parte separada nas juntas. Israel os depositou sobre as grelhas. Então abriu a boca e expeliu sangue sobre os restos — não muito, controlado, concentrado. O efeito foi imediato: a carne começou a se dissolver como açúcar em água quente, do exterior para o interior, com um odor breve e pesado de decomposição acelerada. Em menos de cinco minutos, havia cinza. Os ossos levaram um pouco mais, mas o processo foi completo. Israel abriu o chuveiro e lavou tudo pelo ralo.</p>
+        <div class="action-callout">Naquela mesma noite, Biel e Leo atravessaram São Paulo de carro — uns quarenta minutos de avenidas iluminadas e cruzamentos fechados, rumo ao bordel.</div>
+        <p>No elevador de acesso ao estabelecimento, os dois se cruzaram com o próprio reflexo num espelho de parede. A luz branca do elevador não perdoava: ambos estavam visivelmente pálidos, com veias escurecidas levemente salteadas na pele do pescoço e das mãos. Biel comentou que dava para disfarçar com sangue, mas que maquiagem provavelmente os faria parecer dois palhaços. Leo concordou.</p>
+        <p>Na entrada do salão, o segurança Marquinhos cumprimentou Biel pelo nome. Dentro, a noite de quinta-feira estava em pleno funcionamento: executivos de gravata afrouxada, grupos de rapazes mais jovens em busca de entretenimento, sertanejo nos alto-falantes. Mari — Mariana, gerente de aproximadamente cinquenta anos — viu Biel do outro lado do salão e caminhou em sua direção com um sorriso que misturava alívio e recriminação. Disse que fazia dias que ele não aparecia. Biel apresentou Leo. Mari imediatamente assumiu o registro profissional, tratando Leo com a cordialidade de um potencial cliente importante. Mencionou que Antony havia perguntado por ele.</p>
+        <p>A sala de administração tinha um janelão com vista para o salão abaixo. Antony estava sentado à mesa. Era um homem acima do peso, branquelo, com cabelo ralo penteado para disfarçar a calvície, terno com a camisa aberta no segundo botão — a aparência permanentemente levemente suada de quem carrega muito consigo. Havia nele algo que lembrava políticos de meia-carreira — a postura de quem gerencia favores sem nunca estar no topo da cadeia.</p>
+        <p>A conversa foi breve. Antony reconheceu que havia gerenciado o lugar sozinho depois da morte do pai de Biel, e que, contrariando suas próprias expectativas, havia funcionado. Mas achava que era hora de dividir a responsabilidade. Havia uma pessoa chamada Giovana — alguém que Biel conhecia, e cuja relação com ele era claramente complicada — que passaria a co-gerenciar o estabelecimento. Antony disse que passaria o contato dela depois. Fechou a pasta que tinha na frente e saiu sem cerimônia.</p>
+        <p>Biel acompanhou Antony pelas câmeras de segurança descendo ao estacionamento, entrando num carro com um motorista e partindo. Virou-se para Leo e disse: "Agora tenho que lidar com a Giovana." Indicou o painel de câmeras: as gravações eram armazenadas localmente, sem nuvem, e ele tinha acesso total ao sistema. Leo processou essa informação em silêncio, fazendo as anotações mentais de sempre.</p>
+        <div class="divider">✦</div>
+        <p>De volta ao apartamento de Santana, Roberval estava sozinho com Joe. O cachorro caramelo dormia no sofá com a cabeça no coxim, indiferente ao que havia acontecido no banheiro horas antes. Roberval havia ouvido Israel falar sobre os efeitos do sangue vampírico em animais — a lealdade que ele criava, o vínculo que se formava com o tempo. Havia algo sedutor nisso. Havia também algo perturbador, e Roberval sabia exatamente o que era: ele havia visto como Malik olhava para Israel.</p>
+        <p>Mesmo assim, sentou-se no chão ao lado do sofá. Abriu um pequeno corte no antebraço com a própria unha e chamou Joe pelo nome. O cão levantou a cabeça, farejou o ar, e desceu do sofá. Lambeu o sangue com a cautela inicial de quem experimenta algo desconhecido. Depois com a voracidade de quem encontrou algo necessário.</p>
+        <p>Roberval fechou o corte quando julgou suficiente. Joe ficou parado, cheirando o braço mesmo depois que o fluxo havia parado. Em algum lugar nessa noite, uma linha havia sido cruzada. Era apenas a primeira dose. Seriam necessárias mais duas para completar o vínculo. Roberval ficou olhando para o cão por um longo tempo, sem saber ao certo o que estava sentindo.</p>
+      </div>
+    </div>
+
+    <!-- Cap 5 -->
+    <div class="chapter" id="cap-4">
+      <div class="chapter-header">
+        <span class="chapter-number">Capítulo V</span>
+        <h2 class="chapter-title">A Coisa no Terreno</h2>
+        <p class="chapter-date">20 de maio de 2026 — Santana, São Paulo</p>
+      </div>
+      <div class="chapter-body">
+        <p>Leo saiu para caçar sozinho, como fazia quando a fome se tornava difícil de ignorar. Havia identificado uma presa — um homem caminhando pela rua, inconsciente de que era observado — e estava se aproximando quando a presa simplesmente desapareceu. Não dobrou uma esquina. Não entrou num prédio. Desapareceu, como se algo tivesse puxado o homem para dentro da escuridão.</p>
+        <p>O rastro levou a um terreno abandonado a meio quarteirão: mato alto, entulho disperso, uma grade de alambrado dobrada pelo tempo. Leo chamou Sérgio. Os dois entraram pelo vão na cerca e avançaram pelo capim até ouvir — não ver, ouvir primeiro — o som de alguma coisa se alimentando.</p>
+        <div class="action-callout">No centro do terreno, agachado sobre a presa caída, havia um vampiro. Não havia outra palavra. A postura não era humana — era a da Fera sem disfarce, sem esforço de parecer o que não era.</div>
+        <p>Sérgio reagiu por instinto. Avançou alguns passos, fez contato visual e ativou o Domínio — a mesma disciplina que havia curvado a vontade de camareiras e porteiros dezenas de vezes. A ordem formou-se na garganta antes mesmo de ser pensada. E então nada aconteceu. Não foi resistência — foi ausência. Como falar com alguém que não estava mais lá para ouvir. O Domínio escorregou, e com ele veio a falha bestial: a Fera de Sérgio sentiu o sangue no ar e reagiu antes que ele pudesse conter.</p>
+        <p>Leo estava a alguns metros atrás, invisível — dissolvido na sombra do matagal com uma precisão que só a disciplina permitia. Pegou uma pedra do chão. Arremessou. Acertou a lateral da cabeça do vampiro com um estalo seco.</p>
+        <p>"Oy. Você tá caçando na nossa região. Vaza."</p>
+        <p>O vampiro se levantou devagar. Virou-se na direção da voz — para o nada, porque Leo continuava invisível — e o que havia no rosto não era raiva. Era desprezo. O tipo de olhar que um predador reserva para algo que ainda não entendeu que é presa. Depois os olhos se deslocaram para Sérgio, e ali havia algo diferente: reconhecimento. A mesma expressão que um açougueiro teria ao avaliar o corte de um animal. Um frango de padaria no espeto.</p>
+        <p>Então ele sumiu. Não correu — deslocou-se em velocidade que os olhos não conseguiram acompanhar, e o terreno ficou vazio exceto pelos dois e pelo homem caído na grama.</p>
+        <div class="action-callout">A presa ainda estava viva. Drenada demais para andar, mas viva. Sérgio e Leo deixaram o homem na calçada mais próxima e voltaram ao apartamento sem falar muito.</div>
+        <p>Raquel os esperava na porta. Não havia tocado a campainha, não havia mandado mensagem — simplesmente estava ali, encostada na parede do corredor como se o prédio fosse seu. Ela sabia o endereço. Talvez sempre soubesse.</p>
+        <p>Havia uma gathering. Uma reunião formal de vampiros, convocada pelas facções que governavam aquela cidade nas sombras. O grupo precisava comparecer — bem-vestidos, saciados, sem ceder a nenhuma provocação, porque provocações haveria. Raquel não disse quando. Disse que avisaria.</p>
+        <p>Depois foi embora.</p>
+        <p>Sérgio e Leo passaram o resto da noite caçando com mais cuidado, mais consciência do que estava lá fora com eles naquelas ruas. Quando Leo finalmente se alimentou, a fome cedeu e o sangue aqueceu o que não tinha mais temperatura própria. Ele agradeceu a Sérgio com uma brevidade que dizia mais do que palavras.</p>
+        <p>Nenhum dos dois voltou a mencionar a coisa no terreno. Mas nenhum dos dois esqueceu aquele olhar.</p>
+      </div>
+    </div>
+
+    <div class="chapter" id="cap-5">
+      <div class="chapter-header">
+        <span class="chapter-number">Capítulo VI</span>
+        <h2 class="chapter-title">A Igreja Escura</h2>
+        <p class="chapter-date">27 de maio de 2026 — Santa Terezinha, São Paulo</p>
+      </div>
+      <div class="chapter-body">
+        <p>Sérgio acordou com o remorso antes de acordar com a consciência. A cena voltou antes da memória organizada — o corpo no chão, o sangue no ar, o impulso que havia sido mais rápido do que ele. O homem. Edson. Um advogado que morava ali pela região, sem filhos, sem mulher que o esperasse em casa. Ele havia descoberto o nome pela manhã com a frieza de quem trata um dano. O Johnson faria uma doação para o velório. Anônima, como se o anonimato lavasse algo.</p>
+        <p>Mas nessa noite, sentado na beirada da cama no apartamento do Bom Retiro, Sérgio fez algo incomum: sentiu remorso de verdade. Não a pantomima do remorso que apresentava ao mundo quando convinha — o que dói antes que você consiga evitar. A Fera havia chutado o corpo do homem por raiva, e ele havia deixado. Por um segundo havia deixado. Absorveu isso. Prometeu para si mesmo que não voltaria a acontecer.</p>
+        <p>Havia também a memória de Rita. Quarenta anos, dona de uma loja de roupas, olhos de quem perdeu a ingenuidade mas não a curiosidade. Sérgio havia se alimentado dela na noite anterior e algo tinha sido diferente — não de grau, de categoria. O sangue dela carregava uma ressonância tão densa que a Fera recebeu como oferenda. Enquanto esse sangue durasse, ele saberia dizer que estava vivo. O coração não batia, mas o mundo fingiria que batia.</p>
+        <p>Às onze e meia a campainha soou.</p>
+        <p>Raquel estava na portaria. Os cinco desceram — Sérgio de terno preto e camisa, Israel com blazer e colar de símbolos, Biel de jeans e boné escrito "Norte", Leo de camisa comprida com ar de quem tentou parecer arrumado. Roberval ausente como sempre que o assunto não envolvia garras ou silêncio útil. E lá embaixo, encostada na parede da garagem com a cara de quem espera o ônibus, estava a Raquel. Sapatão de plataforma, regata, Black volumoso, joias discretas. Nada do moletom com capuz. Uma moça que ia à balada.</p>
+        <p>No caminho ela se aproximou de Leo no banco traseiro. Alguém havia dito que ele andava perguntando por ela. Leo tentou ser escorregadio com as palavras e não conseguiu. Raquel ouviu com a atenção de quem catalogou a desculpa antes de ela ser usada.</p>
+        <p>Dez minutos depois pararam numa rua de Santa Terezinha com os postes apagados. As casas tinham luz nas janelas mas a rua estava no breu. Em frente: uma igreja no modelo protestante americano, fachada de pedra, jardim com grade, janelas fechadas deixando escapar luz difusa. Dois homens fumavam na entrada. Quando o carro parou, os olhos deles refletiram a luz disponível por um segundo — dois pontos brancos no escuro. Real ou ilusão, ninguém perguntou.</p>
+        <p>Um deles era Fred Hartman, baixo, de paletó, com sorriso de consultor financeiro que sobreviveu a muitas reuniões difíceis. Entregou cartão para Biel com desenvoltura de quem faz networking até no fim do mundo. O outro era alto, cabeludo, bigode de músico dos anos 70.</p>
+        <p>Os celulares foram recolhidos num saco de tecido preto. Malik ficou do lado de fora com o de Israel. A porta se abriu.</p>
+        <div class="action-callout">Dentro havia fileiras de bancos de madeira. No fundo, um tablado com luz difusa. Cinco presentes os esperavam em silêncio.</div>
+        <p>Mateus — grande, de black power e óculos escuros, braços cruzados, o tipo de postura que não convida conversa — estava sentado com uma jovem de traços indígenas ao lado. Tina. Ela não disse nada mas olhou para o espaço onde Roberval não estava como se esperasse encontrá-lo. Perto do tablado, três mulheres: duas loiras de roupas formais — as irmãs de Moraes, Ana e Maria — e uma mais jovem de cabelo preto em rabo de cavalo que os olhou como quem está prestes a fazer perguntas que ninguém pediu. Frida.</p>
+        <p>Israel foi até as mulheres antes que Raquel terminasse de entrar. Estendeu a mão. Disse o nome. As irmãs recuaram um passo na surpresa. Raquel olhou para ele com uma expressão que misturava respeito involuntário e leve irritação. Biel foi cumprimentando cada pessoa com o sorriso de quem não tem inimigos declarados no salão.</p>
+        <p>Frida começou a interrogar o grupo antes de a reunião ser declarada aberta. De onde vieram. Quem eram os criadores. A que serviam. As irmãs a interromperam com a suavidade de quem desarmou essa bomba outras vezes. "Pode deixar os recém-chegados se assentarem, querida."</p>
+        <p>Então chegaram as figuras de peso.</p>
+        <p>A porta se abriu pela segunda vez e entrou um homem que parecia ter noventa anos e artrite severa — bengala, chapéu, óculos escuros, passos miúdos. Atrás dele, uma mulher negra de turbante de seda, altíssima, magra, com colares e guias de ouro. Atrás dela, um homem de dreads presos postado como sombra a seu serviço. A porta fechou. O velho se endireitou. Os ossos estalaram em sequência, como um instrumento sendo afinado. Caminhou até a primeira fila sem apoio algum e sorriu para os presentes com dentes que dispensavam análise. Ângelo. A pele dele parecia cera derretida que havia esfriado e travado — não envelhecimento, uma deformação de outra ordem.</p>
+        <p>Anna Doll de Moraes foi ao púlpito. Tinha a dicção de atriz de novela em preto e branco — o português que as escolas ensinavam antes de a televisão decidir que clareza era afetação. Fez as apresentações formais. Cada vampiro na sala disse nome, linhagem, facção. O grupo ouviu genealogias que atravessavam séculos: Dom Fernão, Anchieta, Dom Sebastião. Raquel declarou descender do sangue da própria Helena de Troia com o sorriso de quem sabe que vai provocar.</p>
+        <p>Então os presentes olharam para os cinco recém-chegados. Sérgio disse que era filho de Giovana. Israel disse filho de Valéria, feiticeiro dos Tremere — e o nome passou pela sala como óleo quente sobre madeira. Mãe Gisele, quieta no fundo do tablado como árbitro esperando o apito, virou o rosto para Israel e ficou olhando por um tempo que não combinava com o contexto. Biel disse Gabriel Marone, do sangue de Patrícia Noguchi, e que servia a si e aos que estavam com ele. Leo disse que era Leo, Malkavian, que não sabia de quem era filho e que servia àqueles que o haviam abraçado como irmão num momento complicado.</p>
+        <p>Ana apagou as luzes e ligou o projetor.</p>
+        <p>Desaparecimentos triplicados. O motoboy da Vila Aurora. Depois o vídeo de câmera noturna do canteiro: a figura surgindo do nada, o vigia sendo erguido pelo colarinho, o braço que inclinou como quem abre uma garrafa. A cabeça separou. A figura bebeu. Ergueu o tronco como cantil enquanto o sangue escorria pela roupa. Biel sentiu o estômago que não tinha mais reagir da forma que a memória do estômago ainda guardava.</p>
+        <div class="action-callout">Ana pausou o vídeo. Ampliou o rosto. Uma franja caindo nos olhos. Pontos brancos na câmera noturna. Era o vampiro do terreno — e agora havia imagem.</div>
+        <p>Frida abriu o bloquinho. Leu com a voz de quem havia ensaiado: Gabriel Maroni visto pela polícia próximo à cena. O mesmo Maroni se passando por jornalista para entrar no canteiro. Um vigia intimidado por alguém que parecia "usar maquiagem para simular dentes de vampiro." Um homem oriental lindo e bem vestido circulando próximo ao terceiro assassinato. Ela fechou o bloquinho. "E eu apostaria que o senhor Sérgio tem um traje rasgado em casa nesse momento."</p>
+        <p>Leo foi o primeiro a responder. Disse o que havia acontecido no terreno com a precisão de quem não tem nada a esconder e sabe que isso é vantagem. A criatura não era um deles — era mais animal do que vampiro, o Domínio de Sérgio havia escorregado no vazio de uma humanidade que não estava mais lá para receber a ordem.</p>
+        <p>Biel ficou de pé. Agradeceu a Frida pelos pontos levantados com uma cortesia que era tão genuína quanto calculada. Explicou as visitas ao canteiro como investigação, a incisividade com o vigia como um excesso não intencional. Ofereceu colaboração. A sala ouviu. Israel respondeu à acusação com a raiva de quem sabe ter razão e carrega isso como uma pedra na língua — conseguiu não soltá-la. Sérgio foi o último. Falou de crianças que mal aprenderam a ler o mundo. De um território encontrado vazio e defendido sem conhecer as leis. Pediu para serem recebidos como iguais.</p>
+        <p>Fred disse que as evidências materiais eram frágeis.</p>
+        <p>Tina levantou a mão.</p>
+        <p>"Acho que eu conheço esse casaco." Uma pausa. "Chamavam ele de Ezequiel. Eu andei com a galera dele uns tempos atrás."</p>
+        <p>O nome passou pela sala como cheiro de sangue em corredor fechado. Ângelo virou-se devagar. "Faz anos que não vejo Ezequiel. Achei que estivesse em torpor. Ou morto."</p>
+        <p>Ninguém parecia animado com a ideia de que estivesse vivo e acordado.</p>
+        <p>Mãe Gisele se levantou. Era mais alta do que parecia sentada. Disse o que tinha a dizer com a brevidade de quem não precisa de mais palavras: o grupo deveria ter a chance de provar que era capaz de guardar o que dizia que guardava. Se não fossem capazes, ficaria provado que não tinham as qualificações. Quem resolvesse poderia reivindicar o que fosse justo.</p>
+        <p>Todas as cabeças concordaram.</p>
+        <p>Ana declarou o encerramento. O grupo saiu pela mesma porta pela qual havia entrado. A rua ainda estava escura. Malik esperava encostado no carro. Ninguém disse muito no caminho de volta.</p>
+        <p>Ezequiel. Havia um nome agora.</p>
+      </div>
+    </div>
+
+  </div><!-- /sec-capitulos -->
+
+  <!-- PERSONAGENS -->
+  <div id="sec-personagens" class="section">
+    <h2 class="section-title">Os Mortos-Vivos</h2>
+    <p class="section-sub">Clique em um personagem para expandir sua ficha</p>
+
+    <p class="chars-section-label">Personagens jogáveis</p>
+    <div class="chars-grid">
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <p class="char-clan">Toreador</p>
+        <p class="char-name">Sérgio Lee</p>
+        <p class="char-player">Jogador: Bob Nogueira</p>
+        <p class="char-tagline">O catalisador da crise. Filho de Giovana. Uma Fera que escorregou na hora errada — e sobreviveu ao remorso.</p>
+        <div class="char-details">
+          <p>Sérgio perdeu o controle durante uma alimentação no Hotel Unique, matando Suzana e iniciando a cascata de eventos das crônicas. Usa o Domínio com precisão — comanda humanos e apaga memórias com contato visual. No Capítulo V tentou Dominar Ezequiel e sofreu falha bestial. No Capítulo VI passou no teste de remorso e se apresentou formalmente como filho de <em>Giovana</em>.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag">Domínio</span>
+            <span class="discipline-tag">Mesmerize</span>
+            <span class="discipline-tag">Forgetful Mind</span>
+            <span class="discipline-tag">Presença (discrasia ativa)</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <p class="char-clan">Gangrel</p>
+        <p class="char-name">Roberval</p>
+        <p class="char-player">Jogador: Bruno Glaser</p>
+        <p class="char-tagline">Silencioso e observador. Iniciou o vínculo sanguíneo com Joe, seu cachorro caramelo.</p>
+        <div class="char-details">
+          <p>Roberval opera nas margens do grupo. Descartou o carro de Suzana sem comentários. Sua disciplina de Animalismo permite comunicação e influência sobre animais. No Capítulo IV iniciou deliberadamente o blood bond com Joe — primeira dose de três. Com plena consciência do que estava fazendo, e do que havia visto Israel fazer com Malik.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag">Animalismo</span>
+            <span class="discipline-tag">Blood Bond · 1/3</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <p class="char-clan">Malkavian</p>
+        <p class="char-name">Gabriel "Biel" Marone</p>
+        <p class="char-player">Jogador: Juliano Abreu</p>
+        <p class="char-tagline">Herdeiro de um bordel e de uma maldição. Ouve segredos que ninguém disse em voz alta.</p>
+        <div class="char-details">
+          <p>Biel cresceu nos bastidores do bordel de luxo do pai, Oscar — que era, sem saber, um peão de Antony. Na noite em que Oscar morreu, a Malkaviana Patrícia o abraçou antes que Antony pudesse agir. Ainda em choque, Biel drenando involuntariamente Milla — sua única amiga real, que o amava em segredo. Sua maldição, a <em>Sinestesia de Segredos</em>, se manifestou naquele momento: ele ouviu a alma dela ao beber seu sangue. Vive sob o acordo imposto por Antony e caça apenas quem "merece", identificado pelas câmeras do bordel.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag">Auspex</span>
+            <span class="discipline-tag">Heightened Senses</span>
+            <span class="discipline-tag">Sinestesia de Segredos</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <p class="char-clan">Tremere</p>
+        <p class="char-name">Israel Brasil</p>
+        <p class="char-player">Jogador: Marcus Borgonove</p>
+        <p class="char-tagline">Hacker, estrategista, arrogante. Sangue corrosivo que dissolve carne em minutos.</p>
+        <div class="char-details">
+          <p>Israel executou o rollback que apagou o check-in de Sérgio no Unique e dissolveu os restos de Suzana com sangue Tremere no banheiro do apartamento. Mantém Malik como servo ghoul. Sua compulsão de Dominância o colocou em confronto com Biel no canteiro. A arrogância que Biel leu nele não foi uma visão — foi um fato.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag">Sangue Corrosivo</span>
+            <span class="discipline-tag">Hacking</span>
+            <span class="discipline-tag">Compulsão: Dominância</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <p class="char-clan">Malkavian</p>
+        <p class="char-name">Leo Rocha</p>
+        <p class="char-player">Jogador: Miguel Nunes</p>
+        <p class="char-tagline">Invisível quando precisa. Uma sombra de traição futura que apenas Biel viu.</p>
+        <div class="char-details">
+          <p>Leo trabalha com informação, contatos e observação. Subornou o Dr. Casa Grande no IML para confirmar interferência na cadeia de custódia do vigilante. No Capítulo V, usou invisibilidade para se aproximar do vampiro intruso e o expulsou com uma pedrada e intimidação verbal. A visão da Sinestesia de Biel sobre ele — uma sombra de traição futura — permanece não confirmada. Leo não sabe que existe.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag">Domínio</span>
+            <span class="discipline-tag">Invisibilidade</span>
+            <span class="discipline-tag">Contatos</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+    </div>
+
+    <p class="chars-section-label">NPCs relevantes</p>
+    <div class="chars-grid">
+
+      <div class="char-card npc-card" onclick="toggleChar(this)">
+        <p class="char-clan">Nosferatu</p>
+        <p class="char-name">Raquel</p>
+        <p class="char-player">PNJ — Sintonia do Mandaqui</p>
+        <p class="char-tagline">Emissária do norte. Sabe o endereço do grupo. Anunciou a gathering.</p>
+        <div class="char-details">
+          <p>Apareceu das sombras do canteiro na sessão III. Deformidades ósseas evidentes, cheiro de asfalto e noite. Enviada pela Sintonia do Mandaqui para investigar as mortes por exsanguinação. Na sessão V apareceu diretamente no apartamento do grupo — sem avisar, já sabendo o endereço — para anunciar uma gathering vampírica formal. O grupo deve comparecer saciado e bem-vestido.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag">Rede de Mendigos</span>
+            <span class="discipline-tag">Obfuscate</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card npc-card" onclick="toggleChar(this)">
+        <p class="char-clan unknown">Desconhecido</p>
+        <p class="char-name">Ezequiel</p>
+        <p class="char-player">PNJ — antigo conhecido das facções</p>
+        <p class="char-tagline">Nome revelado na gathering. Humanidade quase nula. Presumido em torpor há anos — reapareceu bestial e destruidor.</p>
+        <div class="char-details">
+          <p>Rastro detectado por Biel no canteiro (sessão III) — cheiro de séculos. Encontrado drenando uma presa num terreno baldio (sessão V): comportamento quase inteiramente animal, sem esforço de parecer humano. O Domínio de Sérgio escorregou no vazio. Na gathering (sessão VI) Tina o reconheceu pelo rosto no vídeo. Ângelo confirmou o nome: acreditava que ele estivesse em torpor ou morto. Mãe Gisele sugeriu degeneração total de humanidade. Responsável pelos crimes de exsanguinação na região.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag unknown-tag">Clã: desconhecido</span>
+            <span class="discipline-tag unknown-tag">Velocidade sobrenatural</span>
+            <span class="discipline-tag unknown-tag">Humanidade: mínima ou nula</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card npc-card" onclick="toggleChar(this)">
+        <p class="char-clan unknown">Desconhecido</p>
+        <p class="char-name">Antony</p>
+        <p class="char-player">PNJ — poder real do bordel</p>
+        <p class="char-tagline">Transformou o pai de Biel. Mantém Biel sob controle com um acordo não-opcional.</p>
+        <div class="char-details">
+          <p>Vampiro influente que transformou Oscar (pai de Biel) para usar as câmeras ocultas do bordel como rede de espionagem sobre a elite paulistana. Quando Patrícia abraçou Biel, Antony voltou ao estabelecimento, expulsou a rival e impôs um acordo ao recém-transformado: Biel administra, paga mensalmente e cede o espaço para alimentação de Antony e seus capangas. Na sessão IV impôs Giovana como co-gerente. Saiu de carro com motorista. Clã e poder real: desconhecidos.</p>
+          <div style="margin-top:0.8rem">
+            <span class="discipline-tag unknown-tag">Clã: desconhecido</span>
+            <span class="discipline-tag unknown-tag">Influência política</span>
+          </div>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card npc-card" onclick="toggleChar(this)">
+        <p class="char-clan">Linhagem de Anchieta</p>
+        <p class="char-name">Anna Doll de Moraes</p>
+        <p class="char-player">PNJ — Baronato de Paz e Santana</p>
+        <p class="char-tagline">Conduziu a gathering. Dicção de outro século. Filha de Dom Fernão, sangue de Anchieta.</p>
+        <div class="char-details">
+          <p>Mulher de ~30 anos, loira, cabelo em rabo de cavalo. Português padrão de atriz de novela em preto e branco. Conduziu a reunião com equilíbrio — conteve Frida, abriu espaço para o grupo se defender, propôs os encaminhamentos. Apresentou o vídeo com Ezequiel e as evidências dos crimes. Linhagem extensa: do sangue de Xavier de Sá (Barão do domínio de paz e Santa Ana), Dom Fernão e Anchieta (fundador). Mencionou que a situação pode já estar no radar da "SI".</p>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card npc-card" onclick="toggleChar(this)">
+        <p class="char-clan">Malkavian</p>
+        <p class="char-name">Frida Correia</p>
+        <p class="char-player">PNJ — Principado (inspetora)</p>
+        <p class="char-tagline">Acusou o grupo abertamente com uma caderneta de "evidências". Inspetora a serviço do Principado.</p>
+        <div class="char-details">
+          <p>Jovem, cabelo preto em rabo de cavalo, jaqueta. "Do sangue de ninguém, da linha de Malkavian." Interrogou o grupo antes mesmo da reunião começar, depois listou coincidências comprometedoras: Biel próximo às cenas, grupo no canteiro disfarçado, vigia intimidado, terno rasgado de Sérgio. As irmãs Doll de Moraes a contiveram duas vezes. Oratória inferior à de Anna — mais instinto acusatório do que argumento.</p>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card npc-card" onclick="toggleChar(this)">
+        <p class="char-clan unknown">Desconhecido</p>
+        <p class="char-name">Mateus ("Onça")</p>
+        <p class="char-player">PNJ — Domínios Livres de São Paulo</p>
+        <p class="char-tagline">Antigo nome de guerra: Onça. Desconfiado. Levantou a hipótese da Torre de Marfim.</p>
+        <div class="char-details">
+          <p>Homem negro, grande, black power, óculos escuros, jaquetona pesada. Voz grossa, postura fechada. Questionou se a crise não seria uma manobra da "Torre de Marfim" para forçar intervenção na fronteira. Veio com Tina — os dois representam os Domínios Livres.</p>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+      <div class="char-card npc-card" onclick="toggleChar(this)">
+        <p class="char-clan">Iyanifá da Nação do Sangue</p>
+        <p class="char-name">Mãe Gisele</p>
+        <p class="char-player">PNJ — terceira parte neutra</p>
+        <p class="char-tagline">Iyanifá da Nação do Sangue. Terceira parte neutra na gathering. Propôs dar ao grupo a chance de provar seu valor.</p>
+        <div class="char-details">
+          <p>Mulher negra, muito alta, muito magra. Turbante de seda negra, colares, brincos e anéis de ouro, guias e contas. Presente na gathering como terceira parte neutra — não acima das facções, mas independente delas. Convocada por Anna Doll de Moraes. Ficou em silêncio até o momento decisivo — quando falou, a sala obedeceu. Ao ouvir o nome Tremere, fixou os olhos em Israel por um tempo que não combinava com o contexto.</p>
+        </div>
+        <span class="char-toggle">▾ expandir</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CRONOLOGIA -->
+  <div id="sec-cronologia" class="section">
+    <h2 class="section-title">Cronologia dos Eventos</h2>
+    <p class="section-sub">Do incidente no Unique à missão do Ezequiel</p>
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-date">15 de abril — Noite</p>
+        <p class="tl-title">O Incidente no Hotel Unique</p>
+        <p class="tl-body">Sérgio perde o controle e mata Suzana no suíte do Unique. O grupo é convocado. Israel chama Malik. Biel rastreia o CPD via Auspex. Sérgio domina a camareira. Malik desmembra o corpo. O grupo parte com as malas.</p>
+        <div class="tl-tags">
+          <span class="tl-tag">Sérgio</span><span class="tl-tag">Israel</span><span class="tl-tag">Biel</span><span class="tl-tag">Roberval</span><span class="tl-tag">Leo</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-date">15 de abril — Madrugada</p>
+        <p class="tl-title">O Vigilante Decapitado</p>
+        <p class="tl-body">Israel passa por um cordão policial a 2-3 quarteirões do apartamento. Um vigilante de obra foi encontrado decapitado, quase sem sangue. A conexão com o grupo ainda não é clara.</p>
+        <div class="tl-tags">
+          <span class="tl-tag">Israel</span><span class="tl-tag danger">Mistério</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-date">22 de abril</p>
+        <p class="tl-title">O Rollback e o Reconhecimento</p>
+        <p class="tl-body">Israel apaga o check-in de Sérgio via rollback remoto. Sérgio usa Forgetful Mind na camareira. Partes de Suzana vão para o freezer. Biel e Sérgio caminham ao canteiro — Auspex capta os peritos: "quase não tem sangue aqui", "a cabeça estava lá".</p>
+        <div class="tl-tags">
+          <span class="tl-tag">Israel</span><span class="tl-tag">Sérgio</span><span class="tl-tag">Biel</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-date">6 de maio</p>
+        <p class="tl-title">Dois Rastros de Sangue</p>
+        <p class="tl-body">Grupo entra no canteiro como jornalistas. Biel escava, prova sangue seco: dois cheiros — vampiro muito antigo e morador de rua recente. A Sinestesia de Segredos dispara: arrogância de Israel, sombra de traição sobre Leo. Raquel emerge das sombras.</p>
+        <div class="tl-tags">
+          <span class="tl-tag">Biel</span><span class="tl-tag">Israel</span><span class="tl-tag">Leo</span><span class="tl-tag danger">Raquel aparece</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-date">13 de maio</p>
+        <p class="tl-title">Sangue Novo</p>
+        <p class="tl-body">Raquel explica a geopolítica de Santana. Israel dissolve Suzana com sangue Tremere. Biel e Leo visitam o bordel — Antony impõe Giovana como co-gerente. Roberval inicia o blood bond com Joe: primeira dose.</p>
+        <div class="tl-tags">
+          <span class="tl-tag">Israel</span><span class="tl-tag">Biel</span><span class="tl-tag">Leo</span><span class="tl-tag">Roberval</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-threat"></div>
+        <p class="tl-date">20 de maio</p>
+        <p class="tl-title">A Coisa no Terreno</p>
+        <p class="tl-body">Leo e Sérgio seguem uma presa que desaparece. Encontram um vampiro bestial drenando-a num terreno baldio. Sérgio tenta Dominá-lo — falha bestial. Leo, invisível, acerta pedrada e o expulsa verbalmente. O vampiro some em velocidade sobrenatural. Raquel aparece no apartamento e anuncia a gathering.</p>
+        <div class="tl-tags">
+          <span class="tl-tag">Sérgio</span><span class="tl-tag">Leo</span><span class="tl-tag danger">Ezequiel</span><span class="tl-tag danger">Gathering</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-threat"></div>
+        <p class="tl-date">27 de maio — Meia-noite</p>
+        <p class="tl-title">A Igreja Escura</p>
+        <p class="tl-body">Gathering na igreja de Santa Terezinha. Baronato de Santana, Principado e Domínios Livres reunidos. Frida acusa o grupo. Os PJs se defendem. Tina reconhece o vampiro do vídeo: Ezequiel. Mãe Gisele propõe a missão — encontrar Ezequiel e resolver os crimes legitima o território.</p>
+        <div class="tl-tags">
+          <span class="tl-tag">Grupo</span><span class="tl-tag">Raquel</span><span class="tl-tag danger">Ezequiel — nome revelado</span><span class="tl-tag danger">Missão</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MISTÉRIOS -->
+  <div id="sec-misterios" class="section">
+    <h2 class="section-title">Mistérios Abertos</h2>
+    <p class="section-sub">Fios narrativos sem resolução — atualizado após cada sessão</p>
+
+    <p class="mystery-priority-label alta">▲ Alta Prioridade</p>
+    <div class="mystery-grid">
+
+      <div class="mystery-card">
+        <p class="mystery-card-title">Onde está Ezequiel — e como lidar com ele?</p>
+        <p>Nome revelado na gathering. Antigo conhecido das facções, presumido em torpor. Responsável pelos assassinatos por exsanguinação. Humanidade mínima ou nula. O grupo foi formalmente encarregado de encontrá-lo — sucesso legitima o território, fracasso significa expulsão.</p>
+        <span class="mystery-card-char">→ Grupo (missão ativa)</span>
+      </div>
+
+      <div class="mystery-card">
+        <p class="mystery-card-title">Quem está matando mortais por exsanguinação?</p>
+        <p>Vigilante em Santana (15 abr), motoboy na Vila Aurora (6 mai) — ambos drenados até a morte. Alguém com influência manipulou o processamento no IML. Raquel investiga as mesmas mortes e sabe mais do que revelou.</p>
+        <span class="mystery-card-char">→ Grupo / Raquel</span>
+      </div>
+
+      <div class="mystery-card">
+        <p class="mystery-card-title">A Torre de Marfim</p>
+        <p>Mateus sugeriu na gathering que a crise atual pode ser uma manobra da "Torre de Marfim" para forçar intervenção na fronteira. O grupo não sabe o que é nem qual seu papel na narrativa.</p>
+        <span class="mystery-card-char">→ Grupo</span>
+      </div>
+
+    </div>
+
+    <p class="mystery-priority-label media">◆ Média Prioridade</p>
+    <div class="mystery-grid">
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">O que é a "SI"?</p>
+        <p>Anna Doll de Moraes mencionou na gathering que a situação pode já estar no radar da "SI". Não explicou o que é. O grupo não conhece a sigla nem sabe se representa risco ou oportunidade.</p>
+        <span class="mystery-card-char">→ Anna Doll de Moraes (única a mencionar)</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">A traição de Leo</p>
+        <p>A Sinestesia de Segredos de Biel revelou uma sombra densa sobre Leo — sugere traição futura. Sem data, sem alvo, sem contexto. Leo não sabe. Pode ser distorção da maldição Malkaviana.</p>
+        <span class="mystery-card-char">→ Biel / Leo</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">Câmeras físicas do Hotel Unique</p>
+        <p>O rollback de Israel apagou os registros digitais, mas os SD cards físicos estão no CPD sob o mezanino. Sem registro de hóspede, contexto difícil — mas risco não é zero. Requer acesso físico.</p>
+        <span class="mystery-card-char">→ Israel</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">Antony — clã e poder real</p>
+        <p>Gerencia o bordel de luxo desde a morte do sire de Biel. Postura de quem tem proteção ou autoridade além do óbvio. Clã, filiação, se é vampiro ou humano poderoso: desconhecidos.</p>
+        <span class="mystery-card-char">→ Biel</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">Giovana — quem é ela realmente?</p>
+        <p>Antony a impôs como co-gerente do bordel. Biel reagiu com hostilidade. Na sessão VI, Sérgio se apresentou como "filho de Giovana" — possível que seja a mesma pessoa. Se sim, sire de Sérgio e co-gerente do bordel de Biel são a mesma vampira.</p>
+        <span class="mystery-card-char">→ Biel / Sérgio</span>
+      </div>
+
+    </div>
+
+    <p class="mystery-priority-label resolvido">✓ Resolvidos</p>
+    <div class="mystery-grid">
+
+      <div class="mystery-card resolvida">
+        <p class="mystery-card-title">Quem era o "morador de rua" do canteiro?</p>
+        <p>Biel detectou um rastro fresco — cheiro de rua, capa de chuva — no canteiro da Voluntários da Pátria. Era Raquel: enviada pela Sintonia do Mandaqui para investigar a mesma morte que o grupo investigava, chegou ao local independentemente, pelo mesmo fio.</p>
+        <span class="mystery-card-char">→ Resolvido — sessão III</span>
+      </div>
+
+      <div class="mystery-card resolvida">
+        <p class="mystery-card-title">A gathering vampírica</p>
+        <p>Aconteceu em 27/mai/2026, numa igreja de Santa Terezinha, meia-noite. Presentes: Baronato de Santana, Principado e Domínios Livres. Resultado: o grupo foi encarregado de encontrar Ezequiel. Nome do vampiro do canteiro confirmado.</p>
+        <span class="mystery-card-char">→ Resolvido — sessão VI</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">↑</button>
+
+<script>
+  let currentChap = 0;
+  const totalChaps = 6;
+
+  function buildDots() {
+    const container = document.getElementById('chapter-dots');
+    container.innerHTML = '';
+    for (let i = 0; i < totalChaps; i++) {
+      const d = document.createElement('button');
+      d.className = 'chapter-dot' + (i === currentChap ? ' active' : '');
+      d.setAttribute('aria-label', 'Capítulo ' + (i + 1));
+      d.onclick = () => goToChapter(i);
+      container.appendChild(d);
+    }
+  }
+
+  function goToChapter(n) {
+    document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
+    document.getElementById('cap-' + n).classList.add('active');
+    currentChap = n;
+    document.getElementById('btn-prev').disabled = (n === 0);
+    document.getElementById('btn-next').disabled = (n === totalChaps - 1);
+    buildDots();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function changeChapter(dir) {
+    const next = currentChap + dir;
+    if (next >= 0 && next < totalChaps) goToChapter(next);
+  }
+
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleChar(card) {
+    const wasExpanded = card.classList.contains('expanded');
+    document.querySelectorAll('.char-card').forEach(c => {
+      c.classList.remove('expanded');
+      const t = c.querySelector('.char-toggle');
+      if (t) t.textContent = '▾ expandir';
+    });
+    if (!wasExpanded) {
+      card.classList.add('expanded');
+      const t = card.querySelector('.char-toggle');
+      if (t) t.textContent = '▴ recolher';
+    }
+  }
+
+  function createParticles() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const x = Math.random() * 100;
+      const dur = 12 + Math.random() * 20;
+      const delay = Math.random() * 15;
+      const drift = (Math.random() - 0.5) * 80;
+      p.style.cssText = `left:${x}%;animation-duration:${dur}s;animation-delay:${delay}s;--drift-x:${drift}px;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px`;
+      container.appendChild(p);
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  buildDots();
+  createParticles();
+</script>
+</body>
+</html>
