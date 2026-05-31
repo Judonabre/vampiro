@@ -27,12 +27,11 @@
 
   html { scroll-behavior: smooth; }
 
-  html { font-size: 20px; }
   body {
     background: var(--bg);
     color: var(--text);
     font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1rem;
+    font-size: 20px;
     line-height: 1.85;
     min-height: 100vh;
     overflow-x: hidden;
@@ -120,15 +119,6 @@
   }
   .chapter-dot.active { background: var(--blood-bright); transform: scale(1.3); }
   .chapter-dot:hover { background: var(--text-dim); }
-
-  .btn-first {
-    background: none; border: 1px solid var(--border-bright);
-    color: var(--text-faint); padding: 0.5rem 1rem;
-    font-family: 'Cinzel', serif; font-size: 0.65rem;
-    letter-spacing: 0.1em; cursor: pointer;
-    transition: all 0.2s; text-transform: uppercase;
-  }
-  .btn-first:hover { border-color: var(--blood-dim); color: var(--text-dim); }
 
   .btn-prev, .btn-next {
     background: none; border: 1px solid var(--border-bright);
@@ -224,11 +214,11 @@
     font-size: 0.8rem; color: var(--text-faint);
     font-style: italic; margin-bottom: 0.8rem;
   }
-  .char-tagline { font-size: 1rem; color: #b8aa94; line-height: 1.7; }
+  .char-tagline { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; }
   .char-details {
     display: none; margin-top: 1rem;
     padding-top: 1rem; border-top: 1px solid var(--border);
-    font-size: 1rem; color: #b8aa94; line-height: 1.75;
+    font-size: 0.88rem; color: var(--text-dim); line-height: 1.6;
   }
   .char-card.expanded .char-details { display: block; }
   .char-toggle {
@@ -283,7 +273,7 @@
     font-family: 'Cinzel', serif; font-size: 1rem;
     color: #e8dcc8; margin-bottom: 0.5rem; font-weight: 400;
   }
-  .tl-body { font-size: 1rem; color: #b8aa94; line-height: 1.8; }
+  .tl-body { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
   .tl-tags { margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.3rem; }
   .tl-tag {
     font-size: 0.7rem; padding: 0.1rem 0.5rem;
@@ -298,7 +288,7 @@
     margin-bottom: 0.5rem; letter-spacing: 0.06em;
   }
   .section-sub {
-    font-style: italic; color: var(--text-dim); font-size: 1rem; margin-bottom: 2rem;
+    font-style: italic; color: var(--text-faint); font-size: 0.9rem; margin-bottom: 2rem;
   }
 
   #scroll-top {
@@ -352,16 +342,16 @@
   .mystery-card.resolvida { border-left-color: var(--text-faint); opacity: 0.6; }
   .mystery-card-title {
     font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     color: #e8dcc8;
     margin-bottom: 0.5rem;
     font-weight: 400;
     line-height: 1.4;
   }
   .mystery-card p {
-    font-size: 1rem;
-    color: #b8aa94;
-    line-height: 1.75;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.65;
     margin-bottom: 0.5rem;
   }
   .mystery-card-char {
@@ -372,48 +362,6 @@
     letter-spacing: 0.08em;
     margin-top: 0.2rem;
   }
-
-  .sobre-section { max-width: 100%; }
-  .sobre-lead {
-    font-size: 1.05rem; line-height: 1.9; color: var(--text);
-    margin-bottom: 1.4rem;
-  }
-  .sobre-body {
-    font-size: 1rem; line-height: 1.85; color: var(--text);
-    margin-bottom: 1.4rem;
-  }
-  .sobre-divider {
-    width: 60px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--blood-dim), transparent);
-    margin: 2.5rem auto;
-  }
-  .sobre-role-label {
-    font-family: 'Cinzel', serif; font-size: 0.7rem;
-    letter-spacing: 0.2em; color: var(--text-faint);
-    text-transform: uppercase; margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
-  }
-  .sobre-mestre-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-left: 3px solid var(--blood); padding: 1.5rem 1.8rem;
-    margin-bottom: 2.5rem;
-  }
-  .sobre-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.2rem;
-  }
-  .sobre-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-left: 3px solid var(--border-bright); padding: 1.2rem 1.5rem;
-  }
-  .sobre-char {
-    font-size: 0.75rem; font-family: 'Cinzel', serif;
-    color: var(--blood-bright); letter-spacing: 0.12em;
-    text-transform: uppercase; margin-bottom: 0.3rem; font-weight: 700;
-  }
-  .sobre-nome { font-family: 'Cinzel', serif; font-size: 1.15rem; color: #e8dcc8; margin-bottom: 0.5rem; font-weight: 400; }
-  .sobre-desc { font-size: 1rem; color: var(--text); line-height: 1.8; }
 </style>
 </head>
 <body>
@@ -429,73 +377,16 @@
   </header>
 
   <nav id="main-nav">
-    <button class="nav-btn active" onclick="showSection('sobre', this)">Sobre</button>
-    <button class="nav-btn" onclick="showSection('capitulos', this)">Capítulos</button>
+    <button class="nav-btn active" onclick="showSection('capitulos', this)">Capítulos</button>
     <button class="nav-btn" onclick="showSection('personagens', this)">Personagens</button>
     <button class="nav-btn" onclick="showSection('cronologia', this)">Cronologia</button>
     <button class="nav-btn" onclick="showSection('misterios', this)">Mistérios</button>
   </nav>
 
-  <!-- SOBRE -->
-  <div id="sec-sobre" class="section active">
-    <div class="sobre-section">
-      <p class="sobre-lead">Há jogadores de RPG, e há jogadores de RPG de longa data. A diferença não está no sistema que dominam ou nos manuais que colecionam — está na capacidade de sentar em volta de uma mesa (ou de uma chamada de vídeo) décadas depois e ainda se empolgar com o que vai acontecer naquela noite.</p>
-      <p class="sobre-lead">Este grupo é do segundo tipo.</p>
-      <p class="sobre-body">São amigos que atravessaram edições do D&D, sobreviveram ao 3D&T, mergulharam no Daemon, exploraram o Mundo das Trevas e voltaram para contar. Entre uma campanha e outra, encontram tempo para jogos de tabuleiro, para conversas que se estendem além do horário combinado e para planejar o próximo encontro presencial que vai acontecer "em breve".</p>
-      <p class="sobre-body">O que você encontra aqui é o registro de uma dessas campanhas — a mais recente, ambientada num São Paulo vampírico e político. A ideia de documentar cada sessão, transformar as transcrições em narrativa e publicar tudo num site foi do Juliano, que com a ajuda de uma IA transformou horas de jogo em crônicas literárias, fichas de personagem e um mapa vivo dos mistérios que o grupo ainda precisa resolver.</p>
-
-      <div class="sobre-divider"></div>
-
-      <p class="sobre-role-label">O Mestre</p>
-      <div class="sobre-mestre-card">
-        <p class="sobre-nome">Lucas</p>
-        <p class="sobre-desc">É quem constrói o mundo. Cada sessão começa com uma playlist curada para o ambiente da noite — detalhe que diz muito sobre como ele pensa o jogo. É ele quem pergunta como as pessoas estão de verdade, quem cuida para que ninguém quebre o sono da semana, e quem ao final de cada sessão quer saber se todo mundo se divertiu. Narra São Paulo como uma cidade que respira, com política vampírica tão intrincada quanto a humana.</p>
-      </div>
-
-      <p class="sobre-role-label">Os Jogadores</p>
-      <div class="sobre-grid">
-
-        <div class="sobre-card">
-          <p class="sobre-char">Biel — Malkavian</p>
-          <p class="sobre-nome">Juliano</p>
-          <p class="sobre-desc">Foi ele quem teve a ideia de registrar a campanha, montou o sistema de transcrições e publicou este site. O tipo de pessoa que transforma entusiasmo em projeto.</p>
-        </div>
-
-        <div class="sobre-card">
-          <p class="sobre-char">Sérgio Lee — Toreador</p>
-          <p class="sobre-nome">Bob</p>
-          <p class="sobre-desc">Aparece em cada sessão tendo equilibrado trabalho, filho, horário de dormir e tudo mais — e ainda assim está lá, presente, pontual, torcendo pelo grupo.</p>
-        </div>
-
-        <div class="sobre-card">
-          <p class="sobre-char">Roberval — Gangrel</p>
-          <p class="sobre-nome">Bruno</p>
-          <p class="sobre-desc">Silencioso e prático dentro do jogo. Fora dele é o oposto: pega um violão e transforma qualquer encontro do grupo numa noite boa. O bardo da vida real.</p>
-        </div>
-
-        <div class="sobre-card">
-          <p class="sobre-char">Israel Brasil — Tremere</p>
-          <p class="sobre-nome">Marcus</p>
-          <p class="sobre-desc">Em mais de uma sessão aparece com a filhinha para dar oi para os titios antes de o jogo começar. Equilibra estudos, trabalho e paternidade sem abrir mão de estar presente.</p>
-        </div>
-
-        <div class="sobre-card">
-          <p class="sobre-char">Leo Rocha — Malkavian</p>
-          <p class="sobre-nome">Miguel</p>
-          <p class="sobre-desc">O único do grupo que não mora na mesma cidade dos demais, mas faz de tudo para estar junto sempre que pode. Carinhoso e atento com todos.</p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
   <!-- CAPÍTULOS -->
-  <div id="sec-capitulos" class="section">
+  <div id="sec-capitulos" class="section active">
     <div class="chapter-nav">
-      <div style="display:flex;gap:0.5rem;align-items:center;">
-        <button class="btn-first" id="btn-first" onclick="goToChapter(0)">⇤ Sessão I</button>
-        <button class="btn-prev" id="btn-prev" onclick="changeChapter(-1)">← Anterior</button>
-      </div>
+      <button class="btn-prev" id="btn-prev" onclick="changeChapter(-1)" disabled>← Anterior</button>
       <div class="chapter-dots" id="chapter-dots"></div>
       <button class="btn-next" id="btn-next" onclick="changeChapter(1)">Próximo →</button>
     </div>
@@ -1035,8 +926,6 @@
     currentChap = n;
     document.getElementById('btn-prev').disabled = (n === 0);
     document.getElementById('btn-next').disabled = (n === totalChaps - 1);
-    const btnFirst = document.getElementById('btn-first');
-    if (btnFirst) btnFirst.style.display = (n === 0) ? 'none' : 'inline-block';
     buildDots();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -1051,7 +940,6 @@
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('sec-' + id).classList.add('active');
     btn.classList.add('active');
-    if (id === 'capitulos') goToChapter(totalChaps - 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1087,7 +975,7 @@
     document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 400);
   });
 
-  goToChapter(totalChaps - 1);
+  buildDots();
   createParticles();
 </script>
 </body>
