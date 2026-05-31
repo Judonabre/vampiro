@@ -957,4 +957,142 @@
 
     </div>
 
+    <p class="mystery-priority-label media">◆ Média Prioridade</p>
+    <div class="mystery-grid">
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">O que é a "SI"?</p>
+        <p>Anna Doll de Moraes mencionou na gathering que a situação pode já estar no radar da "SI". Não explicou o que é. O grupo não conhece a sigla nem sabe se representa risco ou oportunidade.</p>
+        <span class="mystery-card-char">→ Anna Doll de Moraes (única a mencionar)</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">A traição de Leo</p>
+        <p>A Sinestesia de Segredos de Biel revelou uma sombra densa sobre Leo — sugere traição futura. Sem data, sem alvo, sem contexto. Leo não sabe. Pode ser distorção da maldição Malkaviana.</p>
+        <span class="mystery-card-char">→ Biel / Leo</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">Câmeras físicas do Hotel Unique</p>
+        <p>O rollback de Israel apagou os registros digitais, mas os SD cards físicos estão no CPD sob o mezanino. Sem registro de hóspede, contexto difícil — mas risco não é zero. Requer acesso físico.</p>
+        <span class="mystery-card-char">→ Israel</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">Antony — clã e poder real</p>
+        <p>Gerencia o bordel de luxo desde a morte do sire de Biel. Postura de quem tem proteção ou autoridade além do óbvio. Clã, filiação, se é vampiro ou humano poderoso: desconhecidos.</p>
+        <span class="mystery-card-char">→ Biel</span>
+      </div>
+
+      <div class="mystery-card media-prio">
+        <p class="mystery-card-title">Giovana — quem é ela realmente?</p>
+        <p>Antony a impôs como co-gerente do bordel. Biel reagiu com hostilidade. Na sessão VI, Sérgio se apresentou como "filho de Giovana" — possível que seja a mesma pessoa. Se sim, sire de Sérgio e co-gerente do bordel de Biel são a mesma vampira.</p>
+        <span class="mystery-card-char">→ Biel / Sérgio</span>
+      </div>
+
+    </div>
+
+    <p class="mystery-priority-label resolvido">✓ Resolvidos</p>
+    <div class="mystery-grid">
+
+      <div class="mystery-card resolvida">
+        <p class="mystery-card-title">Quem era o "morador de rua" do canteiro?</p>
+        <p>Biel detectou um rastro fresco — cheiro de rua, capa de chuva — no canteiro da Voluntários da Pátria. Era Raquel: enviada pela Sintonia do Mandaqui para investigar a mesma morte que o grupo investigava, chegou ao local independentemente, pelo mesmo fio.</p>
+        <span class="mystery-card-char">→ Resolvido — sessão III</span>
+      </div>
+
+      <div class="mystery-card resolvida">
+        <p class="mystery-card-title">A gathering vampírica</p>
+        <p>Aconteceu em 27/mai/2026, numa igreja de Santa Terezinha, meia-noite. Presentes: Baronato de Santana, Principado e Domínios Livres. Resultado: o grupo foi encarregado de encontrar Ezequiel. Nome do vampiro do canteiro confirmado.</p>
+        <span class="mystery-card-char">→ Resolvido — sessão VI</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">↑</button>
+
+<script>
+  let currentChap = 0;
+  const totalChaps = 6;
+
+  function buildDots() {
+    const container = document.getElementById('chapter-dots');
+    container.innerHTML = '';
+    for (let i = 0; i < totalChaps; i++) {
+      const d = document.createElement('button');
+      d.className = 'chapter-dot' + (i === currentChap ? ' active' : '');
+      d.setAttribute('aria-label', 'Capítulo ' + (i + 1));
+      d.onclick = () => goToChapter(i);
+      container.appendChild(d);
+    }
+  }
+
+  function goToChapter(n) {
+    document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
+    document.getElementById('cap-' + n).classList.add('active');
+    currentChap = n;
+    document.getElementById('btn-prev').disabled = (n === 0);
+    document.getElementById('btn-next').disabled = (n === totalChaps - 1);
+    const btnFirst = document.getElementById('btn-first');
+    if (btnFirst) btnFirst.style.display = (n === 0) ? 'none' : 'inline-block';
+    buildDots();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function changeChapter(dir) {
+    const next = currentChap + dir;
+    if (next >= 0 && next < totalChaps) goToChapter(next);
+  }
+
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    btn.classList.add('active');
+    if (id === 'capitulos') goToChapter(totalChaps - 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleChar(card) {
+    const wasExpanded = card.classList.contains('expanded');
+    document.querySelectorAll('.char-card').forEach(c => {
+      c.classList.remove('expanded');
+      const t = c.querySelector('.char-toggle');
+      if (t) t.textContent = '▾ expandir';
+    });
+    if (!wasExpanded) {
+      card.classList.add('expanded');
+      const t = card.querySelector('.char-toggle');
+      if (t) t.textContent = '▴ recolher';
+    }
+  }
+
+  function createParticles() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const x = Math.random() * 100;
+      const dur = 12 + Math.random() * 20;
+      const delay = Math.random() * 15;
+      const drift = (Math.random() - 0.5) * 80;
+      p.style.cssText = `left:${x}%;animation-duration:${dur}s;animation-delay:${delay}s;--drift-x:${drift}px;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px`;
+      container.appendChild(p);
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  goToChapter(totalChaps - 1);
+  createParticles();
+</script>
+</body>
+</html>
+
     <p class="myste
