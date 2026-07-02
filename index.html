@@ -364,6 +364,120 @@
     letter-spacing: 0.08em;
     margin-top: 0.2rem;
   }
+
+  /* === ARCOS EMOCIONAIS === */
+  .arcs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+  .arc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blood-dim);
+    padding: 1.5rem 1.7rem;
+    border-radius: 2px;
+  }
+  .arc-card.toreador  { border-left-color: var(--gold); }
+  .arc-card.gangrel   { border-left-color: #4a6040; }
+  .arc-card.malkavian { border-left-color: #5a3a7a; }
+  .arc-card.tremere   { border-left-color: #7a1a3a; }
+  .arc-card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    color: #e8dcc8;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.15rem;
+  }
+  .arc-card-clan {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 1.3rem;
+  }
+  .arc-card-clan.toreador  { color: var(--gold); }
+  .arc-card-clan.gangrel   { color: #6a8060; }
+  .arc-card-clan.malkavian { color: #9a6adc; }
+  .arc-card-clan.tremere   { color: #cc4a6a; }
+  .arc-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
+    margin: 1.2rem 0 0.7rem;
+  }
+  .arc-intro {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.78;
+  }
+  .arc-entry {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.6rem;
+    align-items: baseline;
+  }
+  .arc-entry-session {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    color: var(--blood-bright);
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    min-width: 2.8rem;
+    padding-top: 0.12rem;
+  }
+  .arc-entry-text {
+    font-size: 0.86rem;
+    color: var(--text-dim);
+    line-height: 1.72;
+  }
+  .arc-tension {
+    background: rgba(139,0,0,0.06);
+    border-left: 2px solid var(--blood-dim);
+    padding: 0.7rem 1rem;
+    margin: 0.6rem 0;
+    font-style: italic;
+    font-size: 0.86rem;
+    color: var(--text);
+    line-height: 1.78;
+  }
+  .arc-current {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    padding: 0.75rem 1rem;
+    margin-top: 0.6rem;
+    font-size: 0.86rem;
+    color: var(--text);
+    line-height: 1.78;
+  }
+  .arc-current-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  @media (max-width: 900px) {
+    .arcs-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .arc-card { padding: 1.1rem 1rem; }
+    .arc-card-name { font-size: 0.95rem; }
+    .arc-entry { gap: 0.6rem; }
+    .arc-entry-session { min-width: 2.2rem; font-size: 0.58rem; }
+    .arc-entry-text { font-size: 0.82rem; }
+    .arc-intro, .arc-tension, .arc-current { font-size: 0.82rem; }
+  }
 </style>
 </head>
 <body>
@@ -383,6 +497,7 @@
     <button class="nav-btn" onclick="showSection('personagens', this)">Personagens</button>
     <button class="nav-btn" onclick="showSection('cronologia', this)">Cronologia</button>
     <button class="nav-btn" onclick="showSection('misterios', this)">Mistérios</button>
+    <button class="nav-btn" onclick="showSection('arcos', this)">Arcos</button>
   </nav>
 
   <!-- CAPÍTULOS -->
@@ -1360,6 +1475,113 @@
 
     </div>
 
+  </div>
+
+  <!-- ARCOS EMOCIONAIS -->
+  <div id="sec-arcos" class="section">
+    <h2 class="section-title">Arcos Emocionais</h2>
+    <p class="section-sub">A evolução interior de cada personagem ao longo da campanha.</p>
+    <div class="arcs-grid">
+
+      <!-- SÉRGIO LEE -->
+      <div class="arc-card toreador">
+        <div class="arc-card-name">Sérgio Lee</div>
+        <div class="arc-card-clan toreador">Toreador · Bob Nogueira</div>
+        <p class="arc-intro">A Fera matou Suzana. Sérgio não é violento por natureza — mas perdeu o controle. E isso é, em certo sentido, pior: ele não escolheu matar. A Fera o fez. E agora ele carrega isso.</p>
+        <div class="arc-section-title">Desenvolvimento</div>
+        <div class="arc-entry"><span class="arc-entry-session">S01</span><span class="arc-entry-text">Suzana quebra algo. Sérgio convoca o grupo, tenta consertar. Mas o conserto é apagamento, não redenção.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S05</span><span class="arc-entry-text">Tenta Dominar Ezequiel — falha completa. A disciplina "escorregou no vazio." Chutou o corpo de Edson em raiva. Emoção bruta, sem elegância.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S06</span><span class="arc-entry-text">Edson tinha nome. Família. Providenciou doação anônima. Na gathering, discurso pedindo reconhecimento como iguais — grande sucesso.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S07</span><span class="arc-entry-text">Evelyn pediu ajuda: a esposa do vizinho Pedro desapareceu. Mandou Johnson investigar — sem saber que está coordenando a busca pela própria vítima.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S09</span><span class="arc-entry-text">Viu Renatão desabar. Murmurou "Merda." No Mosteiro, fez as perguntas certas. No carro de volta: "Então começamos pelos imóveis." O pragmatismo como escudo.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S10</span><span class="arc-entry-text">Giovana — sua sire — quer que ele trafique humanos e converta o Bahamas em clube de alimentação. Encontrou Armando em avançado estado de putrefação no quarto.</span></div>
+        <div class="arc-section-title">Tensão Central</div>
+        <div class="arc-tension">Quer ser reconhecido como igual sem se tornar monstro. O problema: cada vítima que ganha um nome — Suzana, Edson, Pedro — estreita a distância entre ele e o monstro que não quer ser.</div>
+        <div class="arc-current">
+          <span class="arc-current-label">Estado atual — após sessão 10</span>
+          Duas pressões simultâneas: Giovana (exigência concreta — ser traficante, converter o Bahamas) e Ezequiel (paradeiro quase confirmado na casa de Armando). O pragmatismo que sempre foi seu escudo está sendo testado onde mais dói.
+        </div>
+      </div>
+
+      <!-- ROBERVAL -->
+      <div class="arc-card gangrel">
+        <div class="arc-card-name">Roberval</div>
+        <div class="arc-card-clan gangrel">Gangrel · Bruno Glaser</div>
+        <p class="arc-intro">O mais silencioso do grupo. Opera nas margens, age sem comentários. Sua ação mais reveladora até agora é deliberada: está criando um ghoul do próprio cachorro.</p>
+        <div class="arc-section-title">Desenvolvimento</div>
+        <div class="arc-entry"><span class="arc-entry-session">S01</span><span class="arc-entry-text">Pega as chaves do carro de Suzana sem comentário. Faz o que precisa ser feito. Não há drama, não há hesitação.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S04</span><span class="arc-entry-text">Inicia o blood bond com Joe — 1ª dose de 3. É um ato calculado: não por acidente, não por impulso. Roberval quer algo completamente seu e completamente leal.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S06</span><span class="arc-entry-text">Tina (Domínios Livres) o fitou com intensidade na gathering — possível conhecimento prévio. Roberval não é tão invisível quanto pensa.</span></div>
+        <div class="arc-section-title">Tensão Central</div>
+        <div class="arc-tension">Escolhe a lealdade de um animal sobre a de pessoas. Isso pode ser pragmatismo — ou pode ser que ele não acredita mais que pessoas sejam capazes de lealdade sem coerção. O blood bond com Joe é uma pergunta disfarçada de ação: <em>existe algo neste mundo que me pertença de verdade?</em></div>
+        <div class="arc-current">
+          <span class="arc-current-label">Estado atual — após sessão 7 (última participação)</span>
+          Joe está na 1ª dose há mais de um mês in-game — as 2ª e 3ª doses seguem pendentes. Tina o conhece de algum lugar. Teste de remorso previsto pelo Mestre. O que Roberval fez enquanto o grupo enfrentava a gathering e Ezequiel é uma lacuna narrativa aberta.
+        </div>
+      </div>
+
+      <!-- BIEL -->
+      <div class="arc-card malkavian">
+        <div class="arc-card-name">Gabriel "Biel" Marone</div>
+        <div class="arc-card-clan malkavian">Malkavian · Juliano Abreu</div>
+        <p class="arc-intro">Nasceu para a eternidade com sangue de Milla nas mãos — a única que o amava de verdade. Não pediu para ser vampiro. Foi transformado por conveniência alheia, abandonado pela sire, e herdou uma prisão dourada do pai morto.</p>
+        <div class="arc-section-title">Desenvolvimento</div>
+        <div class="arc-entry"><span class="arc-entry-session">Abraço</span><span class="arc-entry-text">Transformou a culpa por Milla em código de conduta: alimenta-se só de quem "merece." É uma moralidade inventada para suportar o que fez — não redime, mas organiza.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S03</span><span class="arc-entry-text">A Sinestesia disparou sobre Israel (arrogância esmagadora) e Leo (sombra densa — traição futura). Ver isso em Leo foi um lembrete: o mundo vampírico é feito de traidores.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S04</span><span class="arc-entry-text">Giovana como co-gerente do Bahamas — agressão íntima. Não é só perda de controle do bordel: é Antony entrando no único espaço que Biel ainda chamava de seu.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S07</span><span class="arc-entry-text">Olhou para o copo de sangue, para o ferimento no braço — hesitou. Fechou o ferimento com algo que pareceu vergonha. Depois deu o sorriso de sempre.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S08</span><span class="arc-entry-text">No carro de volta, disse a Juliana: "Fica super tranquila." Era genuíno — ou era o personagem? Biel não distingue mais. Sabrina não merecia nada, mas estava lá. O código dobrou sob a fome.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S10</span><span class="arc-entry-text">Giovana confirmada como sire de Sérgio. O Bahamas agora é ponto de convergência de duas ameaças: Antony (há anos) e Giovana (sire do colega, com agenda própria).</span></div>
+        <div class="arc-section-title">Tensão Central</div>
+        <div class="arc-tension">Existe entre dois silêncios: o de Milla (que ele causou) e o de Patrícia (que o abandonou). Odeia a sire que lhe deu a existência e deve a ela o fato de ainda estar vivo. Pune o mundo pelos próprios pecados. A pergunta que ecoa: <em>quanto tempo você suportará existir?</em></div>
+        <div class="arc-current">
+          <span class="arc-current-label">Estado atual — após sessão 10</span>
+          Wi-Fi sniffing operando — quando Giovana conectar, Israel captura tudo. Biel está no centro de dois conflitos: Ezequiel (missão externa) e Giovana (ameaça interna ao único território que chama de seu).
+        </div>
+      </div>
+
+      <!-- ISRAEL -->
+      <div class="arc-card tremere">
+        <div class="arc-card-name">Israel Brasil</div>
+        <div class="arc-card-clan tremere">Tremere · Marcus Borgonove</div>
+        <p class="arc-intro">Abraçado moribundo — não como sobrevivente, mas como ativo. O clã não o salvou por compaixão. E o primeiro gesto após o Abraço foi devolver o homem que o havia quebrado — não como punição, mas como presente.</p>
+        <div class="arc-section-title">Desenvolvimento</div>
+        <div class="arc-entry"><span class="arc-entry-session">Pré</span><span class="arc-entry-text">Tornou Malik seu ghoul. A inversão é total — o detetive que o torturou agora bebe o sangue dele. Israel diz que não teme traição. Mas teme a força de Malik. É respeito. Ou medo renomeado.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S01–02</span><span class="arc-entry-text">Enquanto outros colapsam com a morte de Suzana, Israel executa. Rollback, desmembramento, logística. Controle total.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S03</span><span class="arc-entry-text">Compulsão de Dominância no canteiro — confronto com Biel. Primeira vez que perdeu a compostura visivelmente. Biel viu arrogância; o que estava por baixo é mais complicado.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S06</span><span class="arc-entry-text">Mãe Gisele o fitou com intensidade ao saber que era Tremere. Os Tremere carregam uma reputação que Israel pode não conhecer.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S08</span><span class="arc-entry-text">Delegacia — diagnóstico rápido, dois Comandos, saída limpa. Juliana agradeceu. Ele ofereceu dinheiro; ela recusou. O controle funciona. O que fica fora dele é a questão.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S09</span><span class="arc-entry-text">Viu Renatão na praça — por um segundo não viu um alvo, viu um homem. Depois: "Vamos." No Mosteiro, conduziu o interrogatório. Saiu com nomes. Israel lembrou de Renatão ainda no carro.</span></div>
+        <div class="arc-section-title">Tensão Central</div>
+        <div class="arc-tension">Acredita que controle é proteção. Malik existe para isso — alguém completamente controlado, completamente disponível. A compulsão de Dominância não é um bug — é o clã dizendo a verdade sobre o que Israel quer. E a diferença entre Israel e Malik é menor do que Israel admite.</div>
+        <div class="arc-current">
+          <span class="arc-current-label">Estado atual — após sessão 10</span>
+          Armando encontrado morto — mas Ezequiel visita regularmente. Wi-Fi sniffing no Bahamas em operação. Tem vídeo de Renatão no celular — uso a definir. A investigação de Ezequiel ganhou urgência e concretude.
+        </div>
+      </div>
+
+      <!-- LEO -->
+      <div class="arc-card malkavian">
+        <div class="arc-card-name">Leo Rocha</div>
+        <div class="arc-card-clan malkavian">Malkavian · Miguel Nunes</div>
+        <p class="arc-intro">O analista. Chega na sessão 02 já com postura de quem cataloga tudo — rostos, conexões, possibilidades. A maldição Malkaviana ainda não se revelou em jogo. O que, por si só, é uma tensão latente.</p>
+        <div class="arc-section-title">Desenvolvimento</div>
+        <div class="arc-entry"><span class="arc-entry-session">S03</span><span class="arc-entry-text">Usa os contatos certos, faz as perguntas certas. Não sabe que Biel viu uma sombra de traição sobre ele. Opera sem saber que alguém do grupo o vê como ameaça futura.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S04</span><span class="arc-entry-text">No Bahamas, já pensa estrategicamente em Giovana como peça de xadrez. Leo não é impulsivo — tudo é informação.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S05</span><span class="arc-entry-text">Confrontou Ezequiel verbalmente estando invisível. Ezequiel o ignorou com desprezo — olhou para Sérgio como presa fácil. Leo foi descartado. Dói diferente para quem se define pela mente.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S07</span><span class="arc-entry-text">Everton respondeu: "Para de perguntar. Para de procurar." Medo puro. O analista está operando com fontes assustadas e dados insuficientes.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S08</span><span class="arc-entry-text">Renatão segue o blog há anos — uma mensagem, uma resposta animada. O analista não falhou. O que incomoda: quando tudo que você precisa é parecer o que você já foi, quem você está sendo agora?</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S09</span><span class="arc-entry-text">Inclinou-se e sussurrou algo no ouvido de Renatão. Colapso total, automutilação, queda do mirante. Leo ficou parado, pálido. No carro: silêncio. A maldição Malkaviana pode ter sido isso.</span></div>
+        <div class="arc-entry"><span class="arc-entry-session">S10</span><span class="arc-entry-text">Investigou a cozinha de Armando com luvas e precisão — leu a cena corretamente. Virou-se para a sala — e encontrou a mulher acuada no canto.</span></div>
+        <div class="arc-section-title">Tensão Central</div>
+        <div class="arc-tension">Sabe mais do que todos — exceto que Biel vê uma sombra de traição sobre ele. E a maldição Malkaviana ainda não se manifestou publicamente. Quando Leo sussurrou em Renatão e o mundo do homem desmoronou, pode ter sido ela.</div>
+        <div class="arc-current">
+          <span class="arc-current-label">Estado atual — após sessão 10</span>
+          De frente para a mulher acuada no canto da sala. Catalogar não resolve isso — uma ação é necessária, não uma análise. E Ezequiel pode voltar a qualquer momento.
+        </div>
+      </div>
+
+    </div>
   </div>
 
 </div>
