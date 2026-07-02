@@ -302,13 +302,32 @@
   #scroll-top.visible { opacity: 1; }
   #scroll-top:hover { border-color: var(--blood); color: var(--blood-bright); }
 
+  /* Tablet: 5 abas em linha, texto menor */
+  @media (max-width: 768px) {
+    .nav-btn { font-size: 0.62rem; padding: 0.9rem 0.3rem; letter-spacing: 0.06em; }
+  }
+
+  /* Mobile: nav vira 2 linhas (3 + 2) */
   @media (max-width: 600px) {
     body { font-size: 16px; }
     #app { padding: 0 1.2rem; }
     .chars-grid { grid-template-columns: 1fr; }
-    .nav-btn { font-size: 0.62rem; padding: 0.9rem 0.3rem; }
     header h1 { font-size: 1.8rem; }
     .mystery-grid { grid-template-columns: 1fr; }
+
+    #main-nav { flex-wrap: wrap; }
+    .nav-btn {
+      flex: 1 1 33.33%;
+      font-size: 0.65rem;
+      padding: 0.75rem 0.2rem;
+      letter-spacing: 0.07em;
+    }
+    /* 2ª linha: Mistérios e Arcos — ficam com 50% cada */
+    .nav-btn:nth-child(4),
+    .nav-btn:nth-child(5) {
+      flex: 1 1 50%;
+      border-top: 1px solid var(--border-bright);
+    }
   }
 
   /* === MISTÉRIOS === */
